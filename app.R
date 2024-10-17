@@ -17,8 +17,8 @@ ui <- fluidPage(
     column(4, 
            fluidRow(
              h3("Activation Vector"),
-             column(4, h4("A"), tableOutput("vectorA")),
-             column(4, h4("C * A"), tableOutput("vectorA_prime")),
+             column(5, h4("A"), tableOutput("vectorA")),
+             column(3, h4("C * A"), tableOutput("vectorA_prime")),
              column(4, h4("A'"), tableOutput("vectorA_prime_normalized"))
            )
     ),
