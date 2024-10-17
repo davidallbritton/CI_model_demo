@@ -69,7 +69,7 @@ ui <- fluidPage(
 
         <h4>References</h4>
         <p>Kintsch, W. (1988). The role of knowledge in discourse comprehension: A construction-integration model. <i>Psychological Review, 95(2),</i> 163–182. https://doi.org/10.1037/0033-295X.95.2.163</p>
-        <p>Kintsch, W. (1988). <i>Comprehension: A paradigm for cognition</i>. Cambridge University Press.  ISBN: 978-0521629867</p>
+        <p>Kintsch, W. (1998). <i>Comprehension: A paradigm for cognition</i>. Cambridge University Press.  ISBN: 978-0521629867</p>
         <p>Reichle, E. D. (2021). <i>Computational models of reading: A handbook</i>. Oxford University Press. ISBN: 9780195370669</p>
       ')
     )
