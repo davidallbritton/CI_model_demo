@@ -1,4 +1,5 @@
 library(shiny)
+library(ggplot2)
 
 # Define UI for the app
 ui <- fluidPage(
@@ -8,22 +9,19 @@ ui <- fluidPage(
     column(4, 
            actionButton("step", "Step"),
            actionButton("repeat_button", "Repeat"),
-           h3("Matrix C"),
+           h3("Coherence Matrix C"),
            tableOutput("matrixC")
     ),
     column(4, 
-           h3("Current Vector A"),
-           tableOutput("vectorA"),
-           
-           h3("Vector A' (After Multiplication)"),
-           tableOutput("vectorA_prime"),
-           
-           h3("Normalized Vector A'"),
-           tableOutput("vectorA_prime_normalized")
+           fluidRow(
+             column(4, h3("A"), tableOutput("vectorA")),
+             column(4, h3("C * A"), tableOutput("vectorA_prime")),
+             column(4, h3("A'"), tableOutput("vectorA_prime_normalized"))
+           )
     ),
     column(4,
-           h3("Delta Values"),
-           tableOutput("deltaValues")
+           h3("Delta Plot"),
+           plotOutput("deltaPlot")
     )
   )
 )
@@ -46,27 +44,36 @@ server <- function(input, output, session) {
   
   # Display Matrix C
   output$matrixC <- renderTable({
+    colnames(C) <- paste0("P", 1:ncol(C))
     C
   })
   
   # Display the current vector A
   output$vectorA <- renderTable({
-    t(A())
+    data.frame(Value = A(), row.names = paste0("P", 1:length(A())))
   })
   
   # Display vector A' (after multiplication)
   output$vectorA_prime <- renderTable({
-    t(A_prime())
+    data.frame(Value = A_prime(), row.names = paste0("P", 1:length(A_prime())))
   })
   
   # Display normalized vector A'
   output$vectorA_prime_normalized <- renderTable({
-    t(A_prime_normalized())
+    data.frame(Value = A_prime_normalized(), row.names = paste0("P", 1:length(A_prime_normalized())))
   })
   
-  # Display all Delta values
-  output$deltaValues <- renderTable({
-    deltas()
+  # Display Delta plot
+  output$deltaPlot <- renderPlot({
+    if (length(deltas()) > 1) {
+      data <- data.frame(Iteration = seq_along(deltas()), Delta = deltas())
+      ggplot(data, aes(x = Iteration, y = Delta)) +
+        geom_line() +
+        geom_point() +
+        labs(title = "Delta Over Iterations", x = "Iteration", y = "Delta") +
+        theme_minimal() +
+        ylim(0, 1)
+    }
   })
   
   # Define the iteration function
