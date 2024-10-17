@@ -5,10 +5,10 @@ library(ggplot2)
 
 # Define UI for the app
 ui <- fluidPage(
-  titlePanel("Integration Phase of the C-I Model"),
+  titlePanel("Integration Phase of the C-I Model v 1.51"),
   
   fluidRow(
-    column(6,
+    column(12,
            div(style = "display: inline-block; width: 100px;",
                textInput("seed", "Seed", value = "48", width = "80px")
            ),
@@ -17,7 +17,10 @@ ui <- fluidPage(
            ),
            div(style = "display: inline-block; width: 100px;",
                textInput("N", "N", value = "4", width = "80px")
+           ),           div(style = "display: inline-block; width: 100px;",
+                            textInput("S", "S", value = "3", width = "80px")
            ),
+           
            actionButton("step", "Step"),
            actionButton("repeat_button", "Repeat")
     )
