@@ -85,6 +85,7 @@ server <- function(input, output, session) {
         theme(panel.grid.major.x = element_blank(),
               panel.grid.minor = element_blank(),
               panel.grid.major.y = element_line(color = "grey80")) +
+        xlim(1, max(4, length(deltas()))) +
         ylim(0, 1) 
     }
   })
