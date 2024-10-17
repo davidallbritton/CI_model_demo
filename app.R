@@ -4,27 +4,26 @@ library(shiny)
 ui <- fluidPage(
   titlePanel("Matrix-Vector Iteration in R"),
   
-  sidebarLayout(
-    sidebarPanel(
-      actionButton("step", "Step"),
-      actionButton("repeat_button", "Repeat")  # Renamed the button
+  fluidRow(
+    column(4, 
+           actionButton("step", "Step"),
+           actionButton("repeat_button", "Repeat"),
+           h3("Matrix C"),
+           tableOutput("matrixC")
     ),
-    
-    mainPanel(
-      h3("Matrix C"),
-      tableOutput("matrixC"),
-      
-      h3("Current Vector A"),
-      tableOutput("vectorA"),
-      
-      h3("Vector A' (After Multiplication)"),
-      tableOutput("vectorA_prime"),
-      
-      h3("Normalized Vector A'"),
-      tableOutput("vectorA_prime_normalized"),
-      
-      h3("Delta Values"),
-      tableOutput("deltaValues")
+    column(4, 
+           h3("Current Vector A"),
+           tableOutput("vectorA"),
+           
+           h3("Vector A' (After Multiplication)"),
+           tableOutput("vectorA_prime"),
+           
+           h3("Normalized Vector A'"),
+           tableOutput("vectorA_prime_normalized")
+    ),
+    column(4,
+           h3("Delta Values"),
+           tableOutput("deltaValues")
     )
   )
 )
@@ -95,7 +94,7 @@ server <- function(input, output, session) {
   })
   
   # Repeat action
-  observeEvent(input$repeat_button, {  # Renamed here too
+  observeEvent(input$repeat_button, {
     while (Delta() >= 0.1) {
       iterate()
     }
