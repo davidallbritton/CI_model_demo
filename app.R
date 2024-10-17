@@ -10,7 +10,7 @@ ui <- fluidPage(
   fluidRow(
     column(12,
            div(style = "display: inline-block; width: 100px;",
-               textInput("seed", "Seed", value = "48", width = "80px")
+               textInput("seed", "Seed", value = "24", width = "80px")
            ),
            div(style = "display: inline-block; width: 100px;",
                textInput("criterion", "Criterion", value = "0.1", width = "80px")
@@ -22,7 +22,7 @@ ui <- fluidPage(
            ),
            
            actionButton("step", "Step"),
-           actionButton("repeat_button", "Repeat")
+           actionButton("repeat_button", "Full Cycle")
     )
   ),
   
@@ -36,7 +36,7 @@ ui <- fluidPage(
     column(4, 
            fluidRow(
              h3("Activation Vector", style = "text-align: center;"),
-             column(5, h4("A ", style = "text-align: right; margin-top: 5px; margin-bottom: 4px;"), tableOutput("vectorA")),
+             column(5, h4("A ", style = "text-align: center; margin-top: 5px; margin-bottom: 4px;"), tableOutput("vectorA")),
              column(3, h4("C*A", style = "text-align: center; margin-top: 5px; margin-bottom: 4px;"), tableOutput("vectorA_prime")),
              column(2, h4(" A'", style = "text-align: center; margin-top: 5px; margin-bottom: 4px;"), tableOutput("vectorA_prime_normalized")),
              column(2, h4("S", style = "text-align: center; margin-top: 5px; margin-bottom: 4px;"), tableOutput("vectorS_vec"))
@@ -113,6 +113,18 @@ server <- function(input, output, session) {
     }
     data.frame(A_prime_normalized())
   }, colnames = FALSE)
+  
+  # Update S_vec based on highest values in A'
+  observe({
+    A_prime_norm <- A_prime_normalized()
+    S_val <- as.numeric(input$S)
+    if (length(A_prime_norm) > 0) {
+      indices <- order(A_prime_norm, decreasing = TRUE)[1:S_val]
+      S_vec_val <- rep(".", length(A_prime_norm))
+      S_vec_val[indices] <- "**"
+      S_vec(S_vec_val)
+    }
+  })
   
   # Display S_vec
   output$vectorS_vec <- renderTable({
