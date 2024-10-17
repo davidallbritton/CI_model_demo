@@ -82,6 +82,9 @@ server <- function(input, output, session) {
         geom_point() +
         labs(title = "Delta Over Iterations", x = "Iteration", y = "Delta") +
         theme_minimal() +
+        theme(panel.grid.major.x = element_blank(),
+              panel.grid.minor = element_blank(),
+              panel.grid.major.y = element_line(color = "grey80")) +
         ylim(0, 1) 
     }
   })
