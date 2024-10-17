@@ -76,7 +76,7 @@ server <- function(input, output, session) {
   
   # Display Delta plot
   output$deltaPlot <- renderPlot({
-    if (length(deltas()) > 1) {
+    if (length(deltas()) > 0) {
       data <- data.frame(Iteration = seq_along(deltas()), Delta = deltas())
       ggplot(data, aes(x = Iteration, y = Delta)) +
         geom_line() +
