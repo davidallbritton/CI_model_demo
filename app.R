@@ -8,6 +8,13 @@ ui <- fluidPage(
   titlePanel("Integration Phase of the C-I Model"),
   
   fluidRow(
+    column(6,
+           textInput("criterion", "Criterion", value = "0.1"),
+           textInput("seed", "Seed", value = "48")
+    )
+  ),
+  
+  fluidRow(
     column(4, 
            h3("Coherence Matrix C"),
            tableOutput("matrixC"),
@@ -32,11 +39,16 @@ ui <- fluidPage(
 # Define server logic
 server <- function(input, output, session) {
   # Step 1: Initialize the matrix C and vectors
-  set.seed(48)
-  C <- diag(1, 4)
-  upper_values <- sample(0:1, 6, replace = TRUE)
-  C[upper.tri(C)] <- upper_values
-  C[lower.tri(C)] <- t(C)[lower.tri(C)]
+  C <- reactiveVal()
+  
+  observeEvent(input$seed, {
+    set.seed(as.numeric(input$seed))
+    C_val <- diag(1, 4)
+    upper_values <- sample(0:1, 6, replace = TRUE)
+    C_val[upper.tri(C_val)] <- upper_values
+    C_val[lower.tri(C_val)] <- t(C_val)[lower.tri(C_val)]
+    C(C_val)
+  }, ignoreNULL = FALSE)
   
   A_original <- rep(1, 4)
   A <- reactiveVal(A_original)
@@ -48,8 +60,12 @@ server <- function(input, output, session) {
   
   # Display Matrix C
   output$matrixC <- renderTable({
-    colnames(C) <- paste0("P", 1:ncol(C))
-    C
+    C_val <- C()
+    if (is.null(C_val)) {
+      return(NULL)
+    }
+    colnames(C_val) <- paste0("P", 1:ncol(C_val))
+    C_val
   })
   
   # Display the previous vector A
@@ -94,7 +110,8 @@ server <- function(input, output, session) {
   iterate <- function() {
     A_prev(A())  # Store current A as previous value
     A_val <- A()
-    A_prime_val <- C %*% A_val
+    C_val <- C()
+    A_prime_val <- C_val %*% A_val
     A_prime_normalized_val <- A_prime_val / max(A_prime_val)
     Delta_val <- sum(abs(A_val - A_prime_normalized_val))
     
@@ -110,14 +127,14 @@ server <- function(input, output, session) {
   
   # Step action
   observeEvent(input$step, {
-    if (Delta() >= 0.1) {
+    if (Delta() >= as.numeric(input$criterion)) {
       iterate()
     }
   })
   
   # Repeat action
   observeEvent(input$repeat_button, {
-    while (Delta() >= 0.1) {
+    while (Delta() >= as.numeric(input$criterion)) {
       iterate()
     }
   })
