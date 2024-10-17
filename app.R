@@ -1,26 +1,30 @@
+# demonstration of integration phase of the C-I Model
+
 library(shiny)
 library(ggplot2)
 
 # Define UI for the app
 ui <- fluidPage(
-  titlePanel("Matrix-Vector Iteration in R"),
+  titlePanel("Integration Phase of the C-I Model"),
   
   fluidRow(
     column(4, 
-           actionButton("step", "Step"),
-           actionButton("repeat_button", "Repeat"),
+ 
            h3("Coherence Matrix C"),
-           tableOutput("matrixC")
+           tableOutput("matrixC"),
+           actionButton("step", "Step"),
+           actionButton("repeat_button", "Repeat")
     ),
     column(4, 
            fluidRow(
-             column(4, h3("A"), tableOutput("vectorA")),
-             column(4, h3("C * A"), tableOutput("vectorA_prime")),
-             column(4, h3("A'"), tableOutput("vectorA_prime_normalized"))
+             h3("Activation Vector"),
+             column(4, h4("A"), tableOutput("vectorA")),
+             column(4, h4("C * A"), tableOutput("vectorA_prime")),
+             column(4, h4("A'"), tableOutput("vectorA_prime_normalized"))
            )
     ),
     column(4,
-           h3("Delta Plot"),
+           h3("Delta for activation"),
            plotOutput("deltaPlot")
     )
   )
@@ -56,11 +60,17 @@ server <- function(input, output, session) {
   
   # Display vector A' (after multiplication)
   output$vectorA_prime <- renderTable({
+    if (length(deltas()) == 0) {
+      return(NULL)
+    }
     data.frame(A_prime(), row.names = paste0("P", 1:length(A_prime())))
   }, colnames = FALSE)
   
   # Display normalized vector A'
   output$vectorA_prime_normalized <- renderTable({
+    if (length(deltas()) == 0) {
+      return(NULL)
+    }
     data.frame(A_prime_normalized(), row.names = paste0("P", 1:length(A_prime_normalized())))
   }, colnames = FALSE)
   
