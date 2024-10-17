@@ -31,6 +31,12 @@ ui <- fluidPage(
            )
     ),
     column(3, 
+           fluidRow(
+             h3("Activation Vector"),
+             column(5, h4("A"), tableOutput("vectorA")),
+             column(3, h4("C*A"), tableOutput("vectorA_prime")),
+             column(4, h4("A'"), tableOutput("vectorA_prime_normalized"))
+           )
     ),
     column(4,
            h3("Delta for Activation"),
