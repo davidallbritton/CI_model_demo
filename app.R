@@ -26,16 +26,16 @@ ui <- fluidPage(
   fluidRow(
     column(5, 
            h3("Coherence Matrix C"),
-           div(style = "overflow-x: auto;",
+           div(style = "overflow-x: auto; ",
                tableOutput("matrixC")
            )
     ),
     column(3, 
            fluidRow(
-             h3("Activation Vector"),
-             column(5, h4("A"), tableOutput("vectorA")),
-             column(3, h4("C*A"), tableOutput("vectorA_prime")),
-             column(4, h4("A'"), tableOutput("vectorA_prime_normalized"))
+             h3("Activation Vector", style = "text-align: center;"),
+             column(5, h4("A ", style = "text-align: right; margin-top: 5px; margin-bottom: 4px;"), tableOutput("vectorA")),
+             column(3, h4("C*A", style = "text-align: center; margin-top: 5px; margin-bottom: 4px;"), tableOutput("vectorA_prime")),
+             column(4, h4("A'", style = "text-align: center; margin-top: 5px; margin-bottom: 4px;"), tableOutput("vectorA_prime_normalized"))
            )
     ),
     column(4,
@@ -115,7 +115,7 @@ server <- function(input, output, session) {
       ggplot(data, aes(x = Iteration, y = Delta)) +
         geom_line() +
         geom_point() +
-        labs(title = "Delta Over Iterations", x = "Iteration", y = "Delta") +
+        labs(title = "Delta = change from A to A'", x = "Iteration", y = "Delta") +
         theme_minimal() +
         theme(panel.grid.major.x = element_blank(),
               panel.grid.minor = element_blank(),
