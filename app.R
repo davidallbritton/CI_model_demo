@@ -37,6 +37,7 @@ server <- function(input, output, session) {
   
   A_original <- rep(1, 4)
   A <- reactiveVal(A_original)
+  A_prev <- reactiveVal(A_original)  # Store previous value of A
   A_prime <- reactiveVal(A_original)
   A_prime_normalized <- reactiveVal(A_original)
   Delta <- reactiveVal(Inf)
@@ -48,20 +49,20 @@ server <- function(input, output, session) {
     C
   })
   
-  # Display the current vector A
+  # Display the previous vector A
   output$vectorA <- renderTable({
-    data.frame(Value = A(), row.names = paste0("P", 1:length(A())))
-  })
+    data.frame(A_prev(), row.names = paste0("P", 1:length(A_prev())))
+  }, colnames = FALSE)
   
   # Display vector A' (after multiplication)
   output$vectorA_prime <- renderTable({
-    data.frame(Value = A_prime(), row.names = paste0("P", 1:length(A_prime())))
-  })
+    data.frame(A_prime(), row.names = paste0("P", 1:length(A_prime())))
+  }, colnames = FALSE)
   
   # Display normalized vector A'
   output$vectorA_prime_normalized <- renderTable({
-    data.frame(Value = A_prime_normalized(), row.names = paste0("P", 1:length(A_prime_normalized())))
-  })
+    data.frame(A_prime_normalized(), row.names = paste0("P", 1:length(A_prime_normalized())))
+  }, colnames = FALSE)
   
   # Display Delta plot
   output$deltaPlot <- renderPlot({
@@ -78,6 +79,7 @@ server <- function(input, output, session) {
   
   # Define the iteration function
   iterate <- function() {
+    A_prev(A())  # Store current A as previous value
     A_val <- A()
     A_prime_val <- C %*% A_val
     A_prime_normalized_val <- A_prime_val / max(A_prime_val)
