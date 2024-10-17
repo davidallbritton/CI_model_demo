@@ -46,7 +46,34 @@ ui <- fluidPage(
            h3("Delta for Activation"),
            plotOutput("deltaPlot", height = "200px")
     )
+  ), 
+  
+  fluidRow(
+    column(
+      width = 12,
+      HTML('
+        <h4>Conceptual Explanation of the Demonstration</h4>
+        <p>This is a demonstration of the “integration” phase of Kintsch’s (1998) Construction-Integration Model of text comprehension. Assuming the “construction” phase has already produced a set of propositions (P1, P2, P3...) and the connections among those propositions are already represented in the Coherence Matrix C, you can then “Step” through single iterations of the integration process or click “Full Cycle” to see the results at the end of the cycle. A “cycle” refers to all the processing that happens when one new clause or sentence of the text is “read” by the model.</p>
+        <p>The vector “A” is the activation values for each proposition at the beginning of a step in the integration cycle. In one step of the integration cycle, those values are multiplied by the Coherence Matrix C (“C*A”) and then normalized by dividing by the largest resulting value to produce the new activation vector “A’.” Delta is the sum of the absolute differences between the values in A and A’. If Delta is greater than the “Criterion” value, then A’ becomes the new A and another step of the cycle is computed. This continues until Delta < Criterion, indicating that the model has settled into a stable state.</p>
+        <p>At the end of a processing cycle, the propositions with the highest values (denoted with “**” in column “S”) would be carried over to make the Coherence Matrix for the next cycle. You can think of the Coherence Matrix as a representation of the contents of Working Memory. The Coherence Matrix has a total of N propositions: S propositions carried over from the previous cycle; N2 propositions from the new clause or sentence that is being read; and N1 propositions that are retrieved from long term memory (LTM) because they are related to the propositions from the text.</p>
+
+        <h4>Demonstration Details</h4>
+        <ul>
+          <li>“Seed” is just a seed value for the pseudo-random number generator so that you can reproduce the results.</li>
+          <li>Coherence Matrix C has randomly generated 1’s and 0’s indicating whether pairs of propositions are related. The matrix C changes whenever “Seed” or “N” changes.</li>
+          <li>“Criterion” is the stopping value for Delta.</li>
+          <li>“N” is the number of propositions in the Coherence Matrix.</li>
+          <li>“S” is the number of propositions carried over to the next cycle. In this demonstration, the S propositions are just marked with “**”; the demonstration only shows a single cycle of the integration process for a single set of propositions in the Coherence Matrix.</li>
+          <li>Calculations and labels are based on Reichle (2021), pp. 320-321.</li>
+        </ul>
+
+        <h4>References</h4>
+        <p>Kintsch, W. (1988). The role of knowledge in discourse comprehension: A construction-integration model. <i>Psychological Review, 95(2),</i> 163–182. https://doi.org/10.1037/0033-295X.95.2.163</p>
+        <p>Reichle, E. D. (2021). Computational models of reading: A handbook. Oxford University Press. ISBN: 9780195370669</p>
+      ')
+    )
   )
+  
 )
 
 # Define server logic
