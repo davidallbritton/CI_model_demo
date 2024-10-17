@@ -14,22 +14,25 @@ ui <- fluidPage(
            ),
            div(style = "display: inline-block; width: 100px;",
                textInput("criterion", "Criterion", value = "0.1", width = "80px")
+           ),
+           div(style = "display: inline-block; width: 100px;",
+               textInput("N", "N", value = "4", width = "80px")
            )
     )
   ),
   
   fluidRow(
-    column(4, 
+    column(5, 
            h3("Coherence Matrix C"),
            tableOutput("matrixC"),
            actionButton("step", "Step"),
            actionButton("repeat_button", "Repeat")
     ),
-    column(4, 
+    column(3, 
            fluidRow(
              h3("Activation Vector"),
              column(5, h4("A"), tableOutput("vectorA")),
-             column(3, h4("C * A"), tableOutput("vectorA_prime")),
+             column(3, h4("C*A"), tableOutput("vectorA_prime")),
              column(4, h4("A'"), tableOutput("vectorA_prime_normalized"))
            )
     ),
@@ -45,20 +48,29 @@ server <- function(input, output, session) {
   # Step 1: Initialize the matrix C and vectors
   C <- reactiveVal()
   
-  observeEvent(input$seed, {
+  observeEvent({input$seed; input$N}, {
     set.seed(as.numeric(input$seed))
-    C_val <- diag(1, 4)
-    upper_values <- sample(0:1, 6, replace = TRUE)
+    N_val <- as.numeric(input$N)
+    C_val <- diag(1, N_val)
+    upper_values <- sample(0:1, (N_val * (N_val - 1)) / 2, replace = TRUE)
     C_val[upper.tri(C_val)] <- upper_values
     C_val[lower.tri(C_val)] <- t(C_val)[lower.tri(C_val)]
     C(C_val)
+    
+    # Update A_original and reactive values based on new N
+    A_original <- rep(1, N_val)
+    A(A_original)
+    A_prev(A_original)
+    A_prime(A_original)
+    A_prime_normalized(A_original)
+    Delta(Inf)
+    deltas(c())
   }, ignoreNULL = FALSE)
   
-  A_original <- rep(1, 4)
-  A <- reactiveVal(A_original)
-  A_prev <- reactiveVal(A_original)  # Store previous value of A
-  A_prime <- reactiveVal(A_original)
-  A_prime_normalized <- reactiveVal(A_original)
+  A <- reactiveVal(rep(1, 4))
+  A_prev <- reactiveVal(rep(1, 4))  # Store previous value of A
+  A_prime <- reactiveVal(rep(1, 4))
+  A_prime_normalized <- reactiveVal(rep(1, 4))
   Delta <- reactiveVal(Inf)
   deltas <- reactiveVal(c())
   
@@ -106,7 +118,7 @@ server <- function(input, output, session) {
               panel.grid.minor = element_blank(),
               panel.grid.major.y = element_line(color = "grey80")) +
         xlim(1, max(4, length(deltas()))) +
-        ylim(0, 1) 
+        ylim(0, max(deltas(), na.rm = TRUE))
     }
   })
   
