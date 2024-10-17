@@ -24,7 +24,7 @@ ui <- fluidPage(
     ),
     column(4,
            h3("Delta for Activation"),
-           plotOutput("deltaPlot")
+           plotOutput("deltaPlot", height = "200px")
     )
   )
 )
@@ -82,7 +82,7 @@ server <- function(input, output, session) {
         geom_point() +
         labs(title = "Delta Over Iterations", x = "Iteration", y = "Delta") +
         theme_minimal() +
-        ylim(0, 1)
+        ylim(0, 1) 
     }
   })
   
