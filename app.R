@@ -17,24 +17,20 @@ ui <- fluidPage(
            ),
            div(style = "display: inline-block; width: 100px;",
                textInput("N", "N", value = "4", width = "80px")
-           )
+           ),
+           actionButton("step", "Step"),
+           actionButton("repeat_button", "Repeat")
     )
   ),
   
   fluidRow(
     column(5, 
            h3("Coherence Matrix C"),
-           tableOutput("matrixC"),
-           actionButton("step", "Step"),
-           actionButton("repeat_button", "Repeat")
+           div(style = "overflow-x: auto;",
+               tableOutput("matrixC")
+           )
     ),
     column(3, 
-           fluidRow(
-             h3("Activation Vector"),
-             column(5, h4("A"), tableOutput("vectorA")),
-             column(3, h4("C*A"), tableOutput("vectorA_prime")),
-             column(4, h4("A'"), tableOutput("vectorA_prime_normalized"))
-           )
     ),
     column(4,
            h3("Delta for Activation"),
