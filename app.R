@@ -1,4 +1,4 @@
-# demonstration of integration phase of the C-I Model
+# Demonstration of Integration Phase of the C-I Model
 
 library(shiny)
 library(ggplot2)
@@ -9,7 +9,6 @@ ui <- fluidPage(
   
   fluidRow(
     column(4, 
- 
            h3("Coherence Matrix C"),
            tableOutput("matrixC"),
            actionButton("step", "Step"),
@@ -24,7 +23,7 @@ ui <- fluidPage(
            )
     ),
     column(4,
-           h3("Delta for activation"),
+           h3("Delta for Activation"),
            plotOutput("deltaPlot")
     )
   )
@@ -56,14 +55,14 @@ server <- function(input, output, session) {
   # Display the previous vector A
   output$vectorA <- renderTable({
     data.frame(A_prev(), row.names = paste0("P", 1:length(A_prev())))
-  }, colnames = FALSE)
+  }, rownames = TRUE, colnames = FALSE)
   
   # Display vector A' (after multiplication)
   output$vectorA_prime <- renderTable({
     if (length(deltas()) == 0) {
       return(NULL)
     }
-    data.frame(A_prime(), row.names = paste0("P", 1:length(A_prime())))
+    data.frame(A_prime())
   }, colnames = FALSE)
   
   # Display normalized vector A'
@@ -71,7 +70,7 @@ server <- function(input, output, session) {
     if (length(deltas()) == 0) {
       return(NULL)
     }
-    data.frame(A_prime_normalized(), row.names = paste0("P", 1:length(A_prime_normalized())))
+    data.frame(A_prime_normalized())
   }, colnames = FALSE)
   
   # Display Delta plot
