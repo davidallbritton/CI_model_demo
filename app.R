@@ -5,7 +5,7 @@ library(ggplot2)
 
 # Define UI for the app
 ui <- fluidPage(
-  titlePanel("Integration Phase of the C-I Model v 1.51"),
+  titlePanel("Integration Phase of the C-I Model"),
   
   fluidRow(
     column(12,
@@ -33,15 +33,16 @@ ui <- fluidPage(
                tableOutput("matrixC")
            )
     ),
-    column(3, 
+    column(4, 
            fluidRow(
              h3("Activation Vector", style = "text-align: center;"),
              column(5, h4("A ", style = "text-align: right; margin-top: 5px; margin-bottom: 4px;"), tableOutput("vectorA")),
              column(3, h4("C*A", style = "text-align: center; margin-top: 5px; margin-bottom: 4px;"), tableOutput("vectorA_prime")),
-             column(4, h4("A'", style = "text-align: center; margin-top: 5px; margin-bottom: 4px;"), tableOutput("vectorA_prime_normalized"))
+             column(2, h4(" A'", style = "text-align: center; margin-top: 5px; margin-bottom: 4px;"), tableOutput("vectorA_prime_normalized")),
+             column(2, h4("S", style = "text-align: center; margin-top: 5px; margin-bottom: 4px;"), tableOutput("vectorS_vec"))
            )
     ),
-    column(4,
+    column(3,
            h3("Delta for Activation"),
            plotOutput("deltaPlot", height = "200px")
     )
@@ -68,6 +69,7 @@ server <- function(input, output, session) {
     A_prev(A_original)
     A_prime(A_original)
     A_prime_normalized(A_original)
+    S_vec(rep(".", N_val))
     Delta(Inf)
     deltas(c())
   }, ignoreNULL = FALSE)
@@ -76,6 +78,7 @@ server <- function(input, output, session) {
   A_prev <- reactiveVal(rep(1, 4))  # Store previous value of A
   A_prime <- reactiveVal(rep(1, 4))
   A_prime_normalized <- reactiveVal(rep(1, 4))
+  S_vec <- reactiveVal(rep("", 4))  # Reactive vector containing empty strings
   Delta <- reactiveVal(Inf)
   deltas <- reactiveVal(c())
   
@@ -109,6 +112,11 @@ server <- function(input, output, session) {
       return(NULL)
     }
     data.frame(A_prime_normalized())
+  }, colnames = FALSE)
+  
+  # Display S_vec
+  output$vectorS_vec <- renderTable({
+    data.frame(S_vec())
   }, colnames = FALSE)
   
   # Display Delta plot
