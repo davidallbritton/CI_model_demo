@@ -87,9 +87,10 @@ server <- function(input, output, session) {
   })
   
   # Display the previous vector A
+  
   output$vectorA <- renderTable({
-    data.frame(A_prev(), row.names = paste0("P", 1:length(A_prev())))
-  }, rownames = TRUE, colnames = FALSE)
+    data.frame(A_prev(), row.names = paste0("<b>P", 1:length(A_prev()), "</b>"))
+  }, rownames = TRUE, colnames = FALSE, sanitize.rownames.function = identity)
   
   # Display vector A' (after multiplication)
   output$vectorA_prime <- renderTable({
