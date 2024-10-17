@@ -9,8 +9,12 @@ ui <- fluidPage(
   
   fluidRow(
     column(6,
-           textInput("criterion", "Criterion", value = "0.1"),
-           textInput("seed", "Seed", value = "48")
+           div(style = "display: inline-block; width: 100px;",
+               textInput("seed", "Seed", value = "48", width = "80px")
+           ),
+           div(style = "display: inline-block; width: 100px;",
+               textInput("criterion", "Criterion", value = "0.1", width = "80px")
+           )
     )
   ),
   
