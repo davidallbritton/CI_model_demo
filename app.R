@@ -81,12 +81,27 @@ ui <- fluidPage(
 
 # Define server logic
 server <- function(input, output, session) {
+  # Read a text box as a number. If the box is blank, not a number, or out of
+  # range (e.g. while the user is mid-edit), req() quietly pauses whatever is
+  # using it instead of crashing the app; it resumes once a valid value is typed.
+  num_input <- function(id, min = -Inf, integer = FALSE) {
+    x <- suppressWarnings(as.numeric(trimws(input[[id]])))
+    req(length(x) == 1, !is.na(x), x >= min, !integer || x == round(x))
+    x
+  }
+  criterion_input <- function() {
+    x <- num_input("criterion")
+    req(x > 0)  # a criterion of 0 or less could make Full Cycle run forever
+    x
+  }
+
   # Step 1: Initialize the matrix C and vectors
   C <- reactiveVal()
-  
+
   observeEvent({input$seed; input$N}, {
-    set.seed(as.numeric(input$seed))
-    N_val <- as.numeric(input$N)
+    seed_val <- num_input("seed")
+    N_val <- num_input("N", min = 1, integer = TRUE)
+    set.seed(seed_val)
     C_val <- diag(1, N_val)
     upper_values <- sample(0:1, (N_val * (N_val - 1)) / 2, replace = TRUE)
     C_val[upper.tri(C_val)] <- upper_values
@@ -147,9 +162,9 @@ server <- function(input, output, session) {
   # Update S_vec based on highest values in A'
   observe({
     A_prime_norm <- A_prime_normalized()
-    S_val <- as.numeric(input$S)
+    S_val <- min(num_input("S", min = 1, integer = TRUE), length(A_prime_norm))
     if (length(A_prime_norm) > 0) {
-      indices <- order(A_prime_norm, decreasing = TRUE)[1:S_val]
+      indices <- order(A_prime_norm, decreasing = TRUE)[seq_len(S_val)]
       S_vec_val <- rep(".", length(A_prime_norm))
       S_vec_val[indices] <- "**"
       S_vec(S_vec_val)
@@ -167,7 +182,7 @@ server <- function(input, output, session) {
     if (length(deltas()) == 0) {
       return(p(em("Click Step or Full Cycle to see results.")))
     }
-    S_val <- min(as.numeric(input$S), length(A_prime_normalized()))
+    S_val <- min(num_input("S", min = 1, integer = TRUE), length(A_prime_normalized()))
     indices <- sort(order(A_prime_normalized(), decreasing = TRUE)[seq_len(S_val)])
     p(strong(paste0("P", indices, collapse = ", ")))
   })
@@ -210,15 +225,18 @@ server <- function(input, output, session) {
   
   # Step action
   observeEvent(input$step, {
-    if (Delta() >= as.numeric(input$criterion)) {
+    if (Delta() >= criterion_input()) {
       iterate()
     }
   })
-  
-  # Repeat action
+
+  # Repeat action (capped as a safety net against a cycle that never settles)
   observeEvent(input$repeat_button, {
-    while (Delta() >= as.numeric(input$criterion)) {
+    crit <- criterion_input()
+    n <- 0
+    while (Delta() >= crit && n < 1000) {
       iterate()
+      n <- n + 1
     }
   })
 }
