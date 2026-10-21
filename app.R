@@ -44,7 +44,9 @@ ui <- fluidPage(
     ),
     column(3,
            h3("Delta for Activation"),
-           plotOutput("deltaPlot", height = "200px")
+           plotOutput("deltaPlot", height = "200px"),
+           h4("Propositions with the Highest Activations"),
+           uiOutput("topPropositions")
     )
   ), 
   
@@ -159,6 +161,17 @@ server <- function(input, output, session) {
     data.frame(S_vec())
   }, colnames = FALSE)
   
+  # List the S propositions with the highest activations (the "**" rows),
+  # in proposition order, once at least one step has been run
+  output$topPropositions <- renderUI({
+    if (length(deltas()) == 0) {
+      return(p(em("Click Step or Full Cycle to see results.")))
+    }
+    S_val <- min(as.numeric(input$S), length(A_prime_normalized()))
+    indices <- sort(order(A_prime_normalized(), decreasing = TRUE)[seq_len(S_val)])
+    p(strong(paste0("P", indices, collapse = ", ")))
+  })
+
   # Display Delta plot
   output$deltaPlot <- renderPlot({
     if (length(deltas()) > 0) {
