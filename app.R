@@ -230,13 +230,33 @@ server <- function(input, output, session) {
     }
   })
 
-  # Repeat action (capped as a safety net against a cycle that never settles)
+  # Repeat action (capped at 100,000 iterations as a safety net against a cycle that never settles)
+  # The loop works on plain local variables and writes the results back once at
+  # the end; growing the reactive Delta history one value at a time gets very
+  # slow over many iterations.
   observeEvent(input$repeat_button, {
     crit <- criterion_input()
+    max_iter <- 100000
+    C_val <- C()
+    A_val <- A()
+    Delta_val <- Delta()
+    new_deltas <- numeric(max_iter)
     n <- 0
-    while (Delta() >= crit && n < 1000) {
-      iterate()
+    while (Delta_val >= crit && n < max_iter) {
+      A_prev_val <- A_val
+      A_prime_val <- C_val %*% A_val
+      A_val <- A_prime_val / max(A_prime_val)
+      Delta_val <- sum(abs(A_prev_val - A_val))
       n <- n + 1
+      new_deltas[n] <- Delta_val
+    }
+    if (n > 0) {
+      A_prev(A_prev_val)
+      A_prime(A_prime_val)
+      A_prime_normalized(A_val)
+      A(A_val)
+      Delta(Delta_val)
+      deltas(c(deltas(), new_deltas[seq_len(n)]))
     }
   })
 }
