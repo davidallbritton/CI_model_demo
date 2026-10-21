@@ -1,0 +1,10 @@
+name: CI_model_demo
+title: CI_model_demo
+username: allbritton-depaul
+account: allbritton-depaul
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 14710144
+bundleId: 12721332
+url: https://allbritton-depaul.shinyapps.io/CI_model_demo/
+version: 1
