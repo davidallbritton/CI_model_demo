@@ -10,19 +10,19 @@ ui <- fluidPage(
   fluidRow(
     column(12,
            div(style = "display: inline-block; width: 100px;",
-               textInput("seed", "Seed", value = "37", width = "80px")
+               textInput("seed", "Seed", value = "28074", width = "80px")
            ),
            div(style = "display: inline-block; width: 100px;",
                textInput("criterion", "Criterion", value = "0.1", width = "80px")
            ),
            div(style = "display: inline-block; width: 100px;",
-               textInput("S", "S", value = "2", width = "80px")
+               textInput("S", "S", value = "4", width = "80px")
            ),
            div(style = "display: inline-block; width: 100px;",
-               textInput("N2", "N2", value = "3", width = "80px")
+               textInput("N2", "N2", value = "5", width = "80px")
            ),
            div(style = "display: inline-block; width: 100px;",
-               textInput("N1", "N1", value = "3", width = "80px")
+               textInput("N1", "N1", value = "8", width = "80px")
            ),
            div(style = "display: inline-block; width: 100px; vertical-align: top;",
                tags$label("N"),
@@ -114,7 +114,7 @@ server <- function(input, output, session) {
     N2 = list(label = "From text (N2)",   start = "starts at 1",  color = "#0072B2"),
     N1 = list(label = "From LTM (N1)",    start = "starts at 0",  color = "#009E73")
   )
-  groups <- reactiveVal(rep(c("S", "N2", "N1"), c(2, 3, 3)))
+  groups <- reactiveVal(rep(c("S", "N2", "N1"), c(4, 5, 8)))
 
   # Proposition names as bold, group-colored HTML (e.g. for table labels)
   prop_labels <- function(indices = seq_along(groups())) {
